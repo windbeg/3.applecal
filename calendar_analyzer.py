@@ -155,13 +155,8 @@ def calculate_percentages(stats):
     return stats
 
 def start_web_server():
-    PORT = 8080
-    Handler = http.server.SimpleHTTPRequestHandler
-    
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"服务器启动在 http://localhost:{PORT}")
-        webbrowser.open(f"http://localhost:{PORT}")
-        httpd.serve_forever()
+    from web_server import start_web_server
+    start_web_server()
 
 def main():
     # 步骤1：运行AppleScript导出日历数据
