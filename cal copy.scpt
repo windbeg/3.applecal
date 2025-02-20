@@ -1,18 +1,13 @@
 tell application "Calendar" to activate
 
 tell application "Calendar"
-    -- 设置时间范围
-    set currentDate to current date
-    set oneYearAgo to currentDate - (365 * days)
-    
     set personalCalendar to calendar "个人"
     set pornCalendar to calendar "日历"
     set workCalendar to calendar "工作"
 
-    -- 获取过滤后的事件
-    set personalEvents to (every event of personalCalendar whose start date is greater than or equal to oneYearAgo)
-    set pornEvents to (every event of pornCalendar whose start date is greater than or equal to oneYearAgo)
-    set workEvents to (every event of workCalendar whose start date is greater than or equal to oneYearAgo)
+    set personalEvents to every event of personalCalendar
+    set pornEvents to every event of pornCalendar
+    set workEvents to every event of workCalendar
 
     set theOutput to "Calendar|Summary|Start Date|End Date\n"
     

@@ -49,23 +49,20 @@
                 dates: sortedDates,
                 categories: {
                     '个人': [],
-                    '工作': []
+                    '工作': [],
+                    '放松': []
                 },
-                percentages: {
-                    '个人': [],
-                    '工作': []
-                }
+                isWeekend: period === 'daily' ? sortedDates.map(date => {
+                    const d = new Date(date);
+                    return d.getDay() === 0 || d.getDay() === 6;
+                }) : null
             };
             
             sortedDates.forEach(date => {
                 const dayData = data[period][date].categories;
-                const total = (dayData['个人'] || 0) + (dayData['工作'] || 0);
-                
                 result.categories['个人'].push(dayData['个人'] || 0);
                 result.categories['工作'].push(dayData['工作'] || 0);
-                
-                result.percentages['个人'].push(total > 0 ? ((dayData['个人'] || 0) / total * 100) : 0);
-                result.percentages['工作'].push(total > 0 ? ((dayData['工作'] || 0) / total * 100) : 0);
+                result.categories['放松'].push(dayData['放松'] || 0);
             });
             
             return result;
@@ -82,61 +79,43 @@
                             data: data.categories['个人'],
                             backgroundColor: 'rgba(75, 192, 192, 0.8)',
                             borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            order: 2
+                            borderWidth: 1
                         },
                         {
                             label: '工作时间(小时)',
                             data: data.categories['工作'],
                             backgroundColor: 'rgba(153, 102, 255, 0.8)',
                             borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
-                            order: 2
+                            borderWidth: 1
                         },
                         {
-                            label: '个人占比(%)',
-                            data: data.percentages['个人'],
-                            type: 'line',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 2,
-                            fill: false,
-                            yAxisID: 'percentage',
-                            order: 1
-                        },
-                        {
-                            label: '工作占比(%)',
-                            data: data.percentages['工作'],
-                            type: 'line',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 2,
-                            fill: false,
-                            yAxisID: 'percentage',
-                            order: 1
+                            label: '放松时间(小时)',
+                            data: data.categories['放松'],
+                            backgroundColor: 'rgba(255, 159, 64, 0.8)',
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     scales: {
+                        x: {
+                            grid: {
+                                color: (context) => {
+                                    if (data.isWeekend && data.isWeekend[context.index]) {
+                                        return 'rgba(255, 192, 203, 0.4)';
+                                    }
+                                    return 'rgba(0, 0, 0, 0.1)';
+                                }
+                            }
+                        },
                         y: {
                             beginAtZero: true,
-                            position: 'left',
                             title: {
                                 display: true,
                                 text: '时间(小时)'
                             }
-                        },
-                        percentage: {
-                            beginAtZero: true,
-                            position: 'right',
-                            title: {
-                                display: true,
-                                text: '占比(%)'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            },
-                            max: 100
                         }
                     },
                     plugins: {
