@@ -50,7 +50,8 @@
                 categories: {
                     '个人': [],
                     '工作': [],
-                    '放松': []
+                    '放松': [],
+                    '读书': []
                 },
                 isWeekend: period === 'daily' ? sortedDates.map(date => {
                     const d = new Date(date);
@@ -63,6 +64,7 @@
                 result.categories['个人'].push(dayData['个人'] || 0);
                 result.categories['工作'].push(dayData['工作'] || 0);
                 result.categories['放松'].push(dayData['放松'] || 0);
+                result.categories['读书'].push(dayData['读书'] || 0);
             });
             
             return result;
@@ -93,6 +95,13 @@
                             data: data.categories['放松'],
                             backgroundColor: 'rgba(255, 159, 64, 0.8)',
                             borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
+                        }, // 这里缺少了一个逗号
+                        {
+                            label: '读书时间(小时)',
+                            data: data.categories['读书'],
+                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
                             borderWidth: 1
                         }
                     ]

@@ -110,6 +110,8 @@ def analyze_events(events):
                 category = '个人'
             elif '放松' in event['calendar']:
                 category = '放松'
+            elif '读书' in event['calendar']:
+                category = '读书'
             else:
                 category = '工作'
             event_name = event.get('summary', '未命名事件').strip()
