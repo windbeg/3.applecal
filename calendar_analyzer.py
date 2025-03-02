@@ -143,8 +143,6 @@ def analyze_events(events):
                 update_stat(stats['monthly'][month_key], category, event_name, duration)
                 stats['category_summary'][category] += duration
 
-        except KeyError as e:
-            print(f"事件解析失败 - 缺少字段 {e}")
         except Exception as e:
             print(f"处理事件时发生错误: {str(e)}")
 
@@ -297,11 +295,10 @@ def main():
             os.remove(original_export_path)
             print(f"删除临时文件: {original_export_path}")
         pathlib.Path(temp_csv_path).rename(original_export_path)
-        print(f"改名文件: {temp_csv_path}->{original_export_path}")       
+  
     
     # 步骤2：处理数据并生成JSON
     print("\n步骤2：分析日历数据...")
-    print(f'分析数据:{merged_events}')
     stats = analyze_events(merged_events)
     
     with open('./calendar_analysis.json', 'w', encoding='utf-8') as f:
