@@ -1,4 +1,10 @@
 # cal_analysis
-analysis self cal datas
-这是一个用trae code实现的代码。
-之后补充说明
+## 介绍
+这是一个使用trae.ai编写用于分析cal数据的代码。
+
+## 功能
+- 统计苹果日历分类时间统计，然后用图表显示
+
+## 说明
+
+## 目前只使用macos

@@ -11,21 +11,11 @@ import os
 import webbrowser
 
 def run_applescript():
-    script_path = '/Users/mac/trae/3.applecal/cal.scpt'
     try:
-        result = subprocess.run(['osascript', script_path], 
-                             capture_output=True, 
-                             text=True)
-        
-        if result.returncode == 0:
-            print("日历数据导出成功！")
-            return True
-        else:
-            print(f"错误: {result.stderr}")
-            return False
-            
+        from calendar_bridge import get_calendar_events
+        return get_calendar_events()
     except Exception as e:
-        print(f"执行脚本时发生错误: {str(e)}")
+        print(f"获取日历数据时发生错误: {str(e)}")
         return False
 
 def read_calendar_data(file_path):
