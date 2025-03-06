@@ -16,5 +16,12 @@
 2. 每次运行程序，需要取得config.json的最近日期last_run_date，赋值给first_date，然后用当前日期更新last_run_date；如果没有config.json文件，first_date赋值当前日期的第前360天，保存参数文件config.json,保存当前日期为last_run_date；
 3. 读取日历数据，获取first_date日期到当前日期的日历数据，并添加到calendar_export.csv中；同时对celendar_export.csv中可能存在重复的日历数据进行删除
 
-## git的保存文件
+## git的保存文件方式
 1. 
+
+
+## 日历类型
+1. 个人日历：健身、学习
+2. 读书日历：阅读微信读书、看实体书籍等，做笔记
+3. 工作日历：work
+4. 日历：用于记录放松时间
