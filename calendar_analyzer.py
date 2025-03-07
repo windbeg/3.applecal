@@ -274,8 +274,7 @@ def main():
         pathlib.Path(original_export_path).rename(temp_csv_path)
     else:
         print(f"当前文件不存在: {original_export_path}，将创建该空文件")
-        pathlib.path(temp_csv_path).touch()  
-        return
+        pathlib.Path(temp_csv_path).touch()  
     
     # 运行AppleScript获取增量数据
     if not run_applescript(last_run_date):
