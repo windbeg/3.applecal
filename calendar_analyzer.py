@@ -172,7 +172,7 @@ def start_web_server():
 
 def get_config():
     """获取配置信息，如果配置文件不存在则创建默认配置"""
-    config_path = './config.json'
+    config_path = './data.json'
     config = {}
     
     if os.path.exists(config_path):
@@ -186,7 +186,7 @@ def get_config():
     
     # 如果没有last_run_date或配置文件不存在，设置为360天前
     if 'last_run_date' not in config:
-        config['last_run_date'] = (current_date - timedelta(days=360)).strftime('%Y-%m-%d')
+        config['last_run_date'] = (current_date - timedelta(days=210)).strftime('%Y-%m-%d')
     
     # 解析last_run_date为datetime对象
     last_run_date = datetime.strptime(config['last_run_date'], '%Y-%m-%d')
@@ -275,6 +275,8 @@ def main():
     else:
         print(f"当前文件不存在: {original_export_path}，将创建该空文件")
         pathlib.Path(temp_csv_path).touch()  
+        with open(temp_csv_path, 'w', encoding='utf-8') as f:
+            f.write("Calendar|Summary|Start Date|End Date\n")  # 写入表头
     
     # 运行AppleScript获取增量数据
     if not run_applescript(last_run_date):
