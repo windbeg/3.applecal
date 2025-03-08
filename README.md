@@ -1,7 +1,7 @@
 # cal_analysis
 ## 介绍
 这是一个使用trae.ai编写用于分析cal数据的代码。
-
+![image.png](https://windbeg-1333132289.cos.ap-shanghai.myqcloud.com/pic/20250308204942-451.png)
 ## 功能
 1. 统计苹果日历分类时间统计，然后用图表显示
 2. 导出最近7天的日历分析；最近6周的数据分析；最近6个月数据分析
