@@ -11,7 +11,7 @@ import os
 import webbrowser
 import pathlib
 
-def run_applescript(start_date=None):
+def run_applescript(start_date=None, calendar_keys=None, calendar_values=None):
     script_path = './cal.scpt'
     try:
         cmd = ['osascript', script_path]
@@ -20,6 +20,11 @@ def run_applescript(start_date=None):
             date_str = start_date.strftime('%Y-%m-%d')
             cmd.extend([date_str])
             print(f'导出日历起始日期：{date_str}')
+        
+        # 添加日历配置参数
+        if calendar_keys and calendar_values:
+            cmd.extend([calendar_keys, calendar_values])
+            print(f'日历配置：{calendar_keys} |分析配置： {calendar_values}')
             
         result = subprocess.run(cmd, 
                              capture_output=True, 
@@ -119,15 +124,8 @@ def analyze_events(events):
             duration = (event['end_date'] - event['start_date']).total_seconds() / 3600
             start = event['start_date']
             
-            # 分类逻辑（根据日历名称判断）
-            if '个人' in event['calendar']:
-                category = '个人'
-            elif '放松' in event['calendar']:
-                category = '放松'
-            elif '读书' in event['calendar']:
-                category = '读书'
-            else:
-                category = '工作'
+            # 分类逻辑（直接使用日历名称作为类别）
+            category = event['calendar']
             event_name = event.get('summary', '未命名事件').strip()
             
             if start >= seven_days_ago:
@@ -172,8 +170,23 @@ def start_web_server():
 
 def get_config():
     """获取配置信息，如果配置文件不存在则创建默认配置"""
-    config_path = './data.json'
+    config_path = './date.json'
     config = {}
+    
+    # 读取日历配置文件
+    calendar_config_path = './config.json'
+    calendar_config = {}
+    calendar_keys = []
+    calendar_values = []
+    
+    if os.path.exists(calendar_config_path):
+        try:
+            with open(calendar_config_path, 'r', encoding='utf-8') as f:
+                calendar_config = json.load(f)
+                calendar_keys = list(calendar_config.keys())
+                calendar_values = [str(calendar_config[key]) for key in calendar_keys]
+        except Exception as e:
+            print(f"读取日历配置文件失败: {str(e)}")
     
     if os.path.exists(config_path):
         try:
@@ -197,7 +210,7 @@ def get_config():
     with open(config_path, 'w', encoding='utf-8') as f:
         json.dump(config, f, ensure_ascii=False, indent=2)
     
-    return last_run_date
+    return last_run_date, '|'.join(calendar_keys), '|'.join(calendar_values)
 
 def merge_calendar_data(new_data_path, existing_data_path):
     """合并新旧日历数据，并去除重复项"""
@@ -255,7 +268,7 @@ def merge_calendar_data(new_data_path, existing_data_path):
 
 def main():
     # 获取配置信息
-    last_run_date = get_config()
+    last_run_date, calendar_keys, calendar_values = get_config()
     print(f"上次运行时间: {last_run_date.strftime('%Y-%m-%d')}")
     
     # 步骤1：运行AppleScript导出日历数据（仅获取上次运行至今的数据）
@@ -279,7 +292,7 @@ def main():
             f.write("Calendar|Summary|Start Date|End Date\n")  # 写入表头
     
     # 运行AppleScript获取增量数据
-    if not run_applescript(last_run_date):
+    if not run_applescript(last_run_date, calendar_keys, calendar_values):
         print("导出日历数据失败，程序终止")
         # 恢复原始文件
         if os.path.exists(temp_csv_path):
