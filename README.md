@@ -3,8 +3,8 @@
 这是一个使用trae.ai编写用于分析cal数据的代码。
 
 ## 功能
-- 统计苹果日历分类时间统计，然后用图表显示
-1. 导出最近7天的日历分析；最近6周的数据分析；最近6个月数据分析
+1. 统计苹果日历分类时间统计，然后用图表显示
+2. 导出最近7天的日历分析；最近6周的数据分析；最近6个月数据分析
 
 ## 说明
 1. 目前只使用macos
@@ -18,4 +18,4 @@
 3. 如果数据出现错误，请删除date.json、calendar_export.csv、calendar_analysis.csv文件，然后重新运行程序。
 
 4. 最后的界面如下
-https://windbeg-1333132289.cos.ap-shanghai.myqcloud.com/pic/20250308203005-539.png
+![显示界面](https://windbeg-1333132289.cos.ap-shanghai.myqcloud.com/pic/20250308203005-539.png)
