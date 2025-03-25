@@ -164,9 +164,9 @@ def calculate_percentages(stats):
 
     return stats
 
-def start_web_server():
+def start_web_server(calendar_keys=None, calendar_values=None):
     from web_server import start_web_server
-    start_web_server()
+    start_web_server(calendar_keys=calendar_keys, calendar_values=calendar_values)
 
 def get_config():
     """获取配置信息，如果配置文件不存在则创建默认配置"""
@@ -332,7 +332,7 @@ def main():
     
     # 步骤3：启动Web服务器
     print("\n步骤3：启动Web服务器...")
-    start_web_server()
+    start_web_server(calendar_keys, calendar_values)
 
 if __name__ == "__main__":
     main()

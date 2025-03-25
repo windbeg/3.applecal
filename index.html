@@ -43,68 +43,70 @@
         </div>
     </div>
     <script>
+        let calendarConfig = {};
+        
         function processTimeData(data, period, limit) {
             const sortedDates = Object.keys(data[period]).sort().reverse().slice(0, limit);
             const result = {
                 dates: sortedDates,
-                categories: {
-                    '个人': [],
-                    '工作': [],
-                    '放松': [],
-                    '读书': []
-                },
+                categories: {},
                 isWeekend: period === 'daily' ? sortedDates.map(date => {
                     const d = new Date(date);
                     return d.getDay() === 0 || d.getDay() === 6;
                 }) : null
             };
             
+            // 初始化类别数组
+            Object.keys(calendarConfig).forEach(category => {
+                result.categories[category] = [];
+            });
+            
             sortedDates.forEach(date => {
                 const dayData = data[period][date].categories;
-                result.categories['个人'].push(dayData['个人'] || 0);
-                result.categories['工作'].push(dayData['工作'] || 0);
-                result.categories['放松'].push(dayData['放松'] || 0);
-                result.categories['读书'].push(dayData['读书'] || 0);
+                Object.keys(calendarConfig).forEach(category => {
+                    result.categories[category].push(dayData[category] || 0);
+                });
             });
             
             return result;
         }
 
         function createMixedChart(ctx, data, title) {
+            // 定义默认颜色数组
+            const defaultColors = [
+                { bg: 'rgba(75, 192, 192, 0.8)', border: 'rgba(75, 192, 192, 1)' },
+                { bg: 'rgba(153, 102, 255, 0.8)', border: 'rgba(153, 102, 255, 1)' },
+                { bg: 'rgba(255, 159, 64, 0.8)', border: 'rgba(255, 159, 64, 1)' },
+                { bg: 'rgba(255, 99, 132, 0.8)', border: 'rgba(255, 99, 132, 1)' },
+                { bg: 'rgba(54, 162, 235, 0.8)', border: 'rgba(54, 162, 235, 1)' },
+                { bg: 'rgba(255, 206, 86, 0.8)', border: 'rgba(255, 206, 86, 1)' }
+            ];
+            
+            // 动态生成颜色映射
+            const colorMap = {};
+            Object.keys(calendarConfig).forEach((category, index) => {
+                colorMap[category] = defaultColors[index % defaultColors.length];
+            });
+            
+            // 颜色映射已在上面定义
+            
+            // 动态生成数据集
+            const datasets = Object.keys(data.categories).map((category, index) => {
+                const color = colorMap[category] || defaultColors[index % defaultColors.length];
+                return {
+                    label: `${category}时间(小时)`,
+                    data: data.categories[category],
+                    backgroundColor: color.bg,
+                    borderColor: color.border,
+                    borderWidth: 1
+                };
+            });
+            
             return new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: data.dates,
-                    datasets: [
-                        {
-                            label: '个人时间(小时)',
-                            data: data.categories['个人'],
-                            backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: '工作时间(小时)',
-                            data: data.categories['工作'],
-                            backgroundColor: 'rgba(153, 102, 255, 0.8)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: '放松时间(小时)',
-                            data: data.categories['放松'],
-                            backgroundColor: 'rgba(255, 159, 64, 0.8)',
-                            borderColor: 'rgba(255, 159, 64, 1)',
-                            borderWidth: 1
-                        }, // 这里缺少了一个逗号
-                        {
-                            label: '读书时间(小时)',
-                            data: data.categories['读书'],
-                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -137,7 +139,17 @@
             });
         }
 
-        fetch('/calendar_analysis.json')
+        // 先获取日历配置
+        fetch('/calendar_config.json')
+            .then(response => response.json())
+            .then(config => {
+                // 保存配置
+                calendarConfig = config;
+                console.log('日历配置:', calendarConfig);
+                
+                // 然后获取日历数据
+                return fetch('/calendar_analysis.json');
+            })
             .then(response => response.json())
             .then(data => {
                 const dailyData = processTimeData(data, 'daily', 7);
@@ -161,6 +173,9 @@
                     monthlyData,
                     '最近6个月时间分配'
                 );
+            })
+            .catch(error => {
+                console.error('获取数据失败:', error);
             });
     </script>
 </body>
